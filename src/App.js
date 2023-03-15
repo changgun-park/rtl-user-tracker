@@ -1,7 +1,20 @@
+import { useState } from "react";
 import UserForm from "./UserForm";
+import UserList from "./UserList";
 
 function App() {
-  return <UserForm />;
+  const [users, setUsers] = useState([]);
+
+  const onUserAdd = (user) => {
+    setUsers([...users, user]);
+  };
+
+  return (
+    <div>
+      <UserForm onUserAdd={onUserAdd} />
+      <UserList users={users} />
+    </div>
+  );
 }
 
 export default App;
