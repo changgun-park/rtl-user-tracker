@@ -1,18 +1,24 @@
 import { render, screen, within } from "@testing-library/react";
 import UserList from "./UserList";
 
-test("render the correct number of rows", () => {
-  // Render the component
+const renderComponent = () => {
   const users = [
     { name: "jane", email: "jane@jane.com" },
     { name: "sam", email: "sam@sam.com" },
   ];
 
-  const { container } = render(<UserList users={users} />); // 렌더링할 때 자동으로 생성되는 div
+  render(<UserList users={users} />);
+
+  return { users };
+};
+
+test("render the correct number of rows", () => {
+  // Render the component
+  renderComponent();
 
   // Find all the rows in the table
   // eslint-disable-next-line
-  const rows = container.querySelectorAll("tbody tr");
+  const rows = within(screen.getByTestId("users")).getAllByRole("row");
 
   // screen.logTestingPlaygroundURL();
   // const rows = within(screen.getByTestId("users")).getAllByRole("row");
@@ -21,4 +27,16 @@ test("render the correct number of rows", () => {
   expect(rows).toHaveLength(2);
 });
 
-test("render the email and name of each user", () => {});
+test("render the email and name of each user", () => {
+  const { users } = renderComponent();
+
+  // screen.logTestingPlaygroundURL();
+
+  for (let user of users) {
+    const name = screen.getByRole("cell", { name: user.name });
+    const email = screen.getByRole("cell", { name: user.email });
+
+    expect(name).toBeInTheDocument();
+    expect(email).toBeInTheDocument();
+  }
+});
